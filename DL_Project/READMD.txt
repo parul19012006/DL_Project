@@ -1,0 +1,54 @@
+# HealthLens: Global Health Metrics Analysis and Mortality Prediction
+
+## Overview
+
+HealthLens is a data science and machine learning project focused on analyzing global healthcare indicators and predicting key health outcomes. The project uses real-world data to explore trends in mortality, life expectancy, and public health infrastructure across different countries.
+
+The goal is to combine data analysis with predictive modeling to better understand how socioeconomic and healthcare factors influence population health.
+
+---
+
+## Objectives
+
+* Analyze global health data to identify trends and patterns
+* Predict **Adult Mortality** and **Infant Deaths** using machine learning
+* Build a **Deep Learning model** to predict **Life Expectancy**
+* Compare traditional ML models with neural networks
+* Derive meaningful insights from global health indicators
+
+---
+
+## Dataset
+
+The project uses a publicly available dataset based on global health statistics.
+
+**Dataset:** Life Expectancy (WHO) Dataset
+**Source:** Kaggle
+
+The dataset includes:
+
+* Country and Year
+* Adult Mortality
+* Infant Deaths
+* Life Expectancy
+* GDP and Population
+* Healthcare expenditure
+* Disease indicators (HIV, Hepatitis, etc.)
+* Social factors (Schooling, Income composition)
+
+---
+
+## Project Structure
+
+```
+HealthLens/
+│
+├── data/
+│   ├── raw/
+│   └── processed/
+│
+├── notebooks/
+│   ├── 01_data_cleaning.ipynb
+│   ├── 02_eda_visualization.ipynb
+│   ├── 03_model_training.ipynb
+```
