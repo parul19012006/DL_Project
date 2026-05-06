@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Hinglish Sentiment Analyzer</title>
+</head>
+<body bgcolor="#f0f0f0">
+
+  <center>
+    <h1>Hinglish Sentiment Analyzer</h1>
+    <p>Enter a Hinglish sentence and click Analyze</p>
+    <hr width="50%">
+  </center>
+
+  <center>
+    <b>Choose Model:</b><br><br>
+    <input type="radio" name="model" value="lr" checked> Logistic Regression &nbsp;&nbsp;
+    <input type="radio" name="model" value="svm"> SVM
+    <br><br>
+
+    <textarea id="inputText" rows="5" cols="50" placeholder="Type your sentence here... e.g. Yaar ye movie bahut amazing thi!"></textarea>
+    <br><br>
+
+    <b>Try an example:</b><br><br>
+    <button onclick="setEx('Yaar ye movie bahut amazing thi!')">Positive Example</button>
+    <button onclick="setEx('Exam mein bohot kharab gaya, failed ho gaya')">Negative Example</button>
+    <button onclick="setEx('Kal meeting hai office mein')">Neutral Example</button>
+    <br><br>
+
+    <button onclick="analyze()" style="padding:10px 30px; font-size:16px;">ANALYZE</button>
+    <br><br>
+  </center>
+
+  <hr>
+
+  <center>
+    <div id="result" style="display:none;">
+      <h2>Result:</h2>
+      <table border="1" cellpadding="10" cellspacing="0">
+        <tr>
+          <td><b>Sentiment</b></td>
+          <td><b id="sentiment"></b></td>
+        </tr>
+        <tr>
+          <td><b>Confidence</b></td>
+          <td id="confidence"></td>
+        </tr>
+        <tr>
+          <td><b>Positive Score</b></td>
+          <td id="pos"></td>
+        </tr>
+        <tr>
+          <td><b>Negative Score</b></td>
+          <td id="neg"></td>
+        </tr>
+        <tr>
+          <td><b>Neutral Score</b></td>
+          <td id="neu"></td>
+        </tr>
+        <tr>
+          <td><b>Hindi Words %</b></td>
+          <td id="hindi"></td>
+        </tr>
+        <tr>
+          <td><b>English Words %</b></td>
+          <td id="english"></td>
+        </tr>
+        <tr>
+          <td><b>Model Used</b></td>
+          <td id="model"></td>
+        </tr>
+      </table>
+
+      <br>
+      <b>Word Tags:</b><br><br>
+      <div id="wordtags"></div>
+    </div>
+
+    <p id="loading" style="display:none; color:blue;">Analyzing... please wait</p>
+    <p id="error" style="display:none; color:red;"></p>
+  </center>
+
+  <hr>
+  <center>
+    <p><b>About:</b> This tool analyzes sentiment in Hinglish (Hindi + English mixed) text using TF-IDF features and Machine Learning.</p>
+    <p>Made by: <b>Parul Gupta</b> | Roll No: <b>12901172023</b> | B.Tech CSE AI</p>
+  </center>
+
+  <script>
+    function setEx(text) {
+      document.getElementById('inputText').value = text;
+    }
+
+    function analyze() {
+      var text = document.getElementById('inputText').value.trim();
+      if (text === '') {
+        alert('Please enter a sentence first!');
+        return;
+      }
+
+      var model = document.querySelector('input[name="model"]:checked').value;
+
+      document.getElementById('result').style.display = 'none';
+      document.getElementById('error').style.display = 'none';
+      document.getElementById('loading').style.display = 'block';
+
+      fetch('/predict', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: text, model: model })
+      })
+      .then(function(res) { return res.json(); })
+      .then(function(d) {
+        document.getElementById('loading').style.display = 'none';
+
+        document.getElementById('sentiment').innerText = d.sentiment.toUpperCase();
+        document.getElementById('confidence').innerText = Math.round(d.confidence * 100) + '%';
+        document.getElementById('pos').innerText = Math.round(d.scores.positive * 100) + '%';
+        document.getElementById('neg').innerText = Math.round(d.scores.negative * 100) + '%';
+        document.getElementById('neu').innerText = Math.round(d.scores.neutral * 100) + '%';
+        document.getElementById('hindi').innerText = d.lang_mix.hindi + '%';
+        document.getElementById('english').innerText = d.lang_mix.english + '%';
+        document.getElementById('model').innerText = d.model_used;
+
+        var tags = '';
+        for (var i = 0; i < d.word_tags.length; i++) {
+          var w = d.word_tags[i];
+          var color = w.lang === 'HI' ? 'green' : w.lang === 'EN' ? 'blue' : 'gray';
+          tags += '<font color="' + color + '">' + w.word + ' (' + w.lang + ')</font> &nbsp; ';
+        }
+        document.getElementById('wordtags').innerHTML = tags;
+        document.getElementById('result').style.display = 'block';
+      })
+      .catch(function(err) {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('error').innerText = 'Error: Could not connect. Make sure app.py is running.';
+        document.getElementById('error').style.display = 'block';
+      });
+    }
+  </script>
+
+</body>
+</html>
