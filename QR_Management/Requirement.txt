@@ -1,0 +1,7 @@
+streamlit
+pandas
+plotly
+openpyxl
+opencv-python
+pyzbar
+Pillow
