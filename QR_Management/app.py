@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
+import plotly as px
 from Scan_QR import scan
 
 FILE = "QR_Asset_Dataset.xlsx"  # FIXED: matches the actual generated filename
