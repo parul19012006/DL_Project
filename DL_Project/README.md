@@ -1,127 +1,144 @@
-# DRDO Internship — Machine Learning Adversarial Attacks
+# HealthLens: Global Health Metrics Analysis and Mortality Prediction
 
-A literature-based study of adversarial attacks on machine learning systems, completed as part of an internship project at **DRDO** (Defence Research and Development Organisation). The work surveys how deep learning models can be fooled, how those attacks are classified, and how models can be defended and evaluated, with a particular focus on security-sensitive and defence applications.
-
-> **Note:** This folder contains documentation only (a written report and a slide deck). There is no source code, dataset or trained model here.
+A data science and machine learning project that analyses global health indicators and predicts key health outcomes. It cleans the WHO Life Expectancy dataset, explores trends across countries, trains tree-based models to predict **Adult Mortality** and **Infant Deaths**, and includes a neural network for predicting **Life Expectancy**.
 
 ---
 
-## Contents
+## Objectives
 
-| File | Description | Size |
-|------|-------------|------|
-| [`drdo final.pdf`](./drdo%20final.pdf) | Full written report: *Machine Learning Adversarial Attacks: A Comprehensive Analysis of Threats, Defenses, and Robustness Evaluation* | 22 pages |
-| [`ppt.pdf`](./ppt.pdf) | Internship evaluation presentation: *Machine Learning Adversarial Attacks — Understanding Security Vulnerabilities in AI Systems* | 12 slides |
-
----
-
-## Project Overview
-
-Deep neural networks perform very well in vision, language and autonomous systems, but they can be misled by small, deliberately crafted input perturbations that humans cannot notice. This project examines that weakness from both sides:
-
-- **Threats:** how adversarial examples are built and under what assumptions (white-box, black-box, gray-box).
-- **Defences:** how robustness is improved and what trade-offs each method carries.
-- **Evaluation:** which metrics and protocols make robustness claims trustworthy.
-- **Tooling:** how the IBM **Adversarial Robustness Toolkit (ART)** supports attack, defence and evaluation workflows.
-
-### Problem statement
-
-Models that score highly on clean data often degrade sharply on adversarially perturbed inputs. This accuracy-versus-robustness trade-off creates real risk in mission-critical systems where reliability and security matter.
+- Analyse global health data to find trends and patterns
+- Predict **Adult Mortality** and **Infant Deaths** with machine learning (Random Forest and XGBoost)
+- Build a **deep learning model** (Keras neural network) to predict **Life Expectancy**
+- Compare traditional ML models with neural networks
+- Draw insights on how socioeconomic and healthcare factors relate to population health
 
 ---
 
-## Report Structure (`drdo final.pdf`)
+## Dataset
 
-1. **Introduction** — problem statement and contributions
-2. **Background and Literature Review** — formal definition of adversarial examples (bounded perturbation `‖x′ − x‖ₚ ≤ ε` with `f(x′) ≠ y`), history from Szegedy et al. and FGSM onwards
-3. **Attack Taxonomies** — by adversary knowledge, by objective (targeted / untargeted), and by perturbation constraint (L∞, L2, L0, semantic)
-4. **White-box Attacks** — FGSM, PGD, Carlini & Wagner, Auto-Attack, adaptive attacks
-5. **Black-box Attacks** — query-based (zeroth-order, NES), transfer-based, score-based
-6. **Defence Mechanisms** — adversarial training, defensive distillation, detection, input preprocessing, certified defences
-7. **Adversarial Robustness Toolkit (ART)** — architecture, attack and defence catalogue, TensorFlow and PyTorch integration, extensibility, deployment, community impact
-8. **Evaluation Methodologies** — robust accuracy, attack success rate, perturbation magnitude, benchmarks (MNIST, CIFAR-10/100, ImageNet), statistical rigour
-9. **Applications and Case Studies** — autonomous systems, defence and security, medical AI, financial security
-10. **Future Challenges and Conclusion**
+**Life Expectancy (WHO)** dataset from Kaggle, stored as `Life Expectancy Data.csv`.
 
----
+| Property | Value |
+|----------|-------|
+| Rows × columns | 2,938 × 22 |
+| Countries | 193 |
+| Years | 2000 – 2015 |
+| Status split | 2,426 Developing, 512 Developed |
+| Missing values (raw) | 2,563 cells across 14 columns (worst: Population 652, Hepatitis B 553, GDP 448) |
 
-## Presentation Outline (`ppt.pdf`)
-
-| # | Slide |
-|---|-------|
-| 1 | Title |
-| 2 | Contents |
-| 3 | What are adversarial attacks? |
-| 4 | Attack classification matrix (white-box / black-box, targeted / non-targeted) |
-| 5 | Fast Gradient Sign Method (FGSM) |
-| 6 | Attack success rates by model type |
-| 7 | Attack generation pipeline |
-| 8 | Real-world attack scenarios |
-| 9 | Defence strategy framework |
-| 10 | Defence effectiveness metrics |
-| 11 | Future research directions |
-| 12 | Thank you / Q&A |
+**Feature groups:** country, year and development status; life expectancy, adult mortality, infant and under-five deaths; GDP, population and health expenditure; immunisation and disease indicators (Hepatitis B, Polio, Diphtheria, Measles, HIV/AIDS); lifestyle and social factors (alcohol, BMI, thinness, schooling, income composition of resources).
 
 ---
 
-## Key Concepts at a Glance
+## Repository Contents
 
-**Attack knowledge levels**
-
-| Type | Attacker knowledge | Typical methods |
-|------|--------------------|-----------------|
-| White-box | Full: architecture, parameters, gradients | FGSM, PGD, C&W, Auto-Attack |
-| Gray-box | Partial: e.g. architecture but not weights | — |
-| Black-box | Inputs and outputs only | Zeroth-order optimisation, NES, transfer attacks |
-
-**Core formulas covered**
-
-- FGSM: `x_adv = x + ε · sign(∇ₓ J(θ, x, y))`
-- PGD: iterated FGSM steps with projection onto the ε-ball
-- Adversarial training: `min_θ E[ max_{‖δ‖≤ε} L(θ, x + δ, y) ]`
-
-**Defence families**
-
-| Defence | Idea | Trade-off noted in the slides |
-|---------|------|-------------------------------|
-| Adversarial training | Train on adversarial examples | Computationally expensive |
-| Input transformation | Denoise, compress or randomise inputs | None listed |
-| Detection methods | Flag suspicious inputs | May produce false positives |
-| Certified defences | Mathematical robustness guarantees | Limited to small perturbations, high complexity |
+| File | Purpose |
+|------|---------|
+| `Life Expectancy Data.csv` | Raw dataset |
+| `Data_cleaning.ipynb` | Cleans the raw data and writes `cleaned_health_data.csv` |
+| `cleaned_health_data.csv` | Cleaned dataset used for modelling |
+| `EDA.ipynb` | Exploratory analysis and visualisations; writes `eda_ready_data.csv` |
+| `eda_ready_data.csv` | Identical copy of the cleaned data (byte-for-byte) |
+| `Model_training.ipynb` | Trains Random Forest and XGBoost models for Adult Mortality and Infant Deaths |
+| `adult_mortality_model.pkl` | Saved XGBoost model for Adult Mortality |
+| `infant_deaths_model.pkl` | Saved XGBoost model for Infant Deaths |
+| `Life_Expectancy.ipynb` | Neural network for Life Expectancy (see [Known Issues](#known-issues)) |
+| `life_expectancy_nn_model.h5` | Saved Keras model from the notebook above |
+| `READMD.txt` | Original project notes (superseded by this README) |
 
 ---
 
-## How to Use
+## Workflow
 
-Open either PDF directly in the GitHub viewer, or clone the repository and view locally:
+### 1. Data cleaning (`Data_cleaning.ipynb`)
+- Strip and standardise column names (for example `"Life expectancy "` becomes `Life_expectancy`)
+- Fill missing numeric values with each column's **median**
+- Encode `Status` as `Developing = 0`, `Developed = 1`
+- Check for duplicates (none found)
+- Save `cleaned_health_data.csv` (0 missing values)
+
+### 2. Exploratory analysis (`EDA.ipynb`)
+- Summary statistics and a full correlation heatmap
+- Distributions of Adult Mortality and Infant Deaths
+- Top 10 countries by average life expectancy
+- Global adult mortality trend over time
+- GDP vs Life Expectancy, coloured by development status
+- Bubble chart of GDP, Life Expectancy, Population and Adult Mortality
+
+### 3. Mortality prediction (`Model_training.ipynb`)
+- Drop `Country`; use the remaining columns except the two targets as features (19 features)
+- 80/20 train–test split, `random_state=42`
+- **Random Forest:** 200 trees
+- **XGBoost:** 200 estimators, learning rate 0.05, max depth 6
+- XGBoost models are saved with `joblib`
+
+### 4. Life expectancy neural network (`Life_Expectancy.ipynb`)
+- Features standardised with `StandardScaler`
+- Architecture: Dense(128, ReLU) → Dropout(0.2) → Dense(64, ReLU) → Dropout(0.2) → Dense(32, ReLU) → Dense(1)
+- Adam optimiser, MSE loss, MAE metric
+
+---
+
+## Results
+
+Test-set performance (20% hold-out):
+
+| Target | Model | MAE | RMSE | R² |
+|--------|-------|-----|------|-----|
+| Adult Mortality | Random Forest | 49.04 | 78.12 | 0.576 |
+| Adult Mortality | XGBoost | 49.52 | 79.47 | 0.561 |
+| Infant Deaths | Random Forest | 1.52 | 6.52 | 0.998 |
+| Infant Deaths | XGBoost | 1.67 | 8.79 | 0.996 |
+
+Random Forest scores slightly better than XGBoost on both targets, but the XGBoost models are the ones saved to disk.
+
+**Neural network:** the notebook output (MAE 69.25, R² −55.32) comes from a network that was never trained, so it is not a valid result. See below.
+
+---
+
+## Known Issues
+
+1. **The neural network is never trained.** `Life_Expectancy.ipynb` builds and compiles the model but has no `model.fit(...)` call, so the reported metrics and the saved `life_expectancy_nn_model.h5` belong to an untrained network. Adding a training step (for example `model.fit(X_train, y_train, epochs=100, validation_split=0.2)`) before evaluation, then re-saving, is needed before any comparison with the tree models.
+2. **Infant Deaths R² is inflated by a near-duplicate feature.** `under_five_deaths` stays in the feature set and correlates 0.997 with `infant_deaths`, so the 0.996–0.998 scores mostly reflect that relationship rather than genuine prediction from socioeconomic factors. Dropping it would give a more meaningful result.
+3. **Possible data leakage in preprocessing.** Median imputation runs on the whole dataset before the train–test split, and the split is random by row, so the same country appears in both training and test sets. A country-wise split would give a more realistic estimate of generalisation.
+4. **Documentation mismatch.** `READMD.txt` (filename typo included) describes a `data/raw`, `data/processed`, `notebooks/` layout with numbered notebooks. The actual folder is flat and uses different notebook names.
+
+---
+
+## Setup
+
+Python 3 (the notebooks were run on Python 3.12) with:
 
 ```bash
-git clone https://github.com/parul19012006/DL_Project.git
-cd "DL_Project/DRDO Intern"
+pip install pandas numpy matplotlib seaborn scikit-learn xgboost joblib tensorflow
 ```
 
-Suggested reading order: skim `ppt.pdf` for the overview, then read `drdo final.pdf` for depth.
+Run the notebooks in this order from inside the `DL_Project` folder (they read files by relative path):
+
+1. `Data_cleaning.ipynb`
+2. `EDA.ipynb`
+3. `Model_training.ipynb`
+4. `Life_Expectancy.ipynb`
+
+### Using the saved mortality models
+
+Features must match the training columns and order:
+
+```python
+import joblib
+import pandas as pd
+
+df = pd.read_csv("cleaned_health_data.csv")
+X = df.drop(columns=["Country", "Adult_Mortality", "infant_deaths"])
+
+adult_model = joblib.load("adult_mortality_model.pkl")
+print(adult_model.predict(X.head()))
+```
+
+Load `.pkl` files only from sources you trust.
 
 ---
 
-## Limitations
+## Tech Stack
 
-- The report is a **survey and analysis**; it does not include original experiments or reproducible code.
-- Figures in the slides (for example attack success rates by architecture, and defence effectiveness percentages) are presented as illustrative summaries without a stated dataset, model or experimental setup, so they should not be treated as measured results.
-- The reference list in the report is shorter than its in-text citation range, so a few numbered citations do not map to a listed entry.
-
----
-
-## References (as listed in the report)
-
-1. Szegedy et al. (2013). *Intriguing properties of neural networks.* arXiv:1312.6199
-2. Goodfellow, Shlens & Szegedy (2014). *Explaining and harnessing adversarial examples.* arXiv:1412.6572
-3. Madry et al. (2017). *Towards deep learning models resistant to adversarial attacks.* arXiv:1706.06083
-4. Carlini & Wagner (2017). *Towards evaluating the robustness of neural networks.* IEEE S&P
-
----
-
-## Author
-
-**Parul Gupta** — CSE (AI)
-Internship project at DRDO
+Python · pandas · NumPy · Matplotlib · Seaborn · scikit-learn · XGBoost · TensorFlow/Keras · joblib · Jupyter
